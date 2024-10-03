@@ -5,12 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="styles.css" rel="stylesheet">
-    <title>Private Tuition</title>
+    <title>TuitonLabs</title>
 </head>
 <body class="bg-gray-200">
     <header>
-        <div class="bg-slate-900 flex justify-center">
-            <input class="h-10 m-5 w-1/4 rounded-2xl text-center" placeholder="Type to search">
+        <div class="bg-slate-900 flex justify-center text-center">
+            <div class="flex items-center ml-14 mr-56">
+                <p class="font-bold text-white text-2xl">TuitionLabs</p>
+            </div>
+            <div class="flex flex-grow justify-center">
+                <input class="h-10 m-5 w-1/2 rounded-2xl text-center outline-none" placeholder="Type to search">
+            </div>
+            <div class="flex items-center mr-10">
+                <button>
+                    <p class="bg-emerald-400 rounded-lg p-1 pl-5 pr-5 font-bold hover:bg-neutral-100">Checkout</p>
+                </button>
+            </div>
         </div>
     </header>
     <main class="flex flex-row">
@@ -42,7 +52,7 @@
                 <p class="m-1 text-bold text-lg"> Sort By </p>
             </div>
             <form>
-                <div class="ml-5 mr-32 text-bold text-base">
+                <div class="ml-5 mr-32 mb-64 text-bold text-base">
                     <label class="flex items-center mb-5 rounded-2xl">
                             <input type="radio" name="sortBy" value="subject" class="mr-2">
                             Ascending
@@ -53,12 +63,24 @@
                     </label>
                 </div>
             </form>
-            
         </div>
         <div class="h-full w-full">
-            <div class="flex flex-row flex-wrap gap-5 justify-center">
-                <div class="bg-neutral-100 w-80 h-80 rounded-lg m-5 shadow-xl">
-                    <p class="text-white text-center text-lg">Maths</p>
+            <div class="flex flex-row flex-wrap gap-10 justify-center">
+                <div class="inline-flex flex-row text-center items-center bg-neutral-100 h-44 rounded-lg m-10 shadow-xl gap-5">
+                    <img src="physics.png" class="h-20 w-20 ml-5">
+                    <div class="flex flex-col items-start">
+                        <p class="font-bold text-xl">Physics</p>
+                        <div class="flex flex-row gap-5 text-neutral-500">
+                            <p class="text-green-400">$100</p>
+                            <p>Manchester</p>
+                            <p>25 seats</p>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-300 rounded-full text-2xl font-bold h-10 w-10 flex items-center justify-center mr-5 hover:bg-emerald-400">
+                        <button>
+                            <p class="relative bottom-0.5">+</p>
+                        </button>
+                    </div>
                 </div> 
             </div>
         </div>
