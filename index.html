@@ -4,17 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="styles.css" rel="stylesheet">
     <title>Private Tuition</title>
 </head>
 <body class="bg-gray-200">
     <header>
-        <div class="bg-indigo-600 flex justify-center">
-            <input class="bg-gray h-10 m-5 w-2/5 rounded-2xl text-center" placeholder="Type to search">
+        <div class="bg-slate-900 flex justify-center">
+            <input class="h-10 m-5 w-1/4 rounded-2xl text-center" placeholder="Type to search">
         </div>
     </header>
-    <main>
-        <div class="bg-indigo-400 h-20 flex flex-grow ">
-        
+    <main class="flex flex-row">
+        <div class="bg-slate-950 inline-flex flex-col text-white min-h-full">
+            <div class="bg-gray-800 text-center mt-10 mb-10 ml-5 mr-5 rounded-lg">
+                <p class="m-1 text-bold text-lg"> Filters </p>
+            </div>
+            <form>
+                <div class="ml-5 mr-32 text-bold text-base">
+                    <label class="flex items-center mb-5 rounded-2xl">
+                            <input type="radio" name="searchCriteria" value="subject" class="mr-2">
+                            Subject
+                    </label>
+                    <label class="flex items-center mb-5">
+                            <input type="radio" name="searchCriteria" value="location" class="mr-2">
+                            Location
+                    </label>
+                    <label class="flex items-center mb-5">
+                            <input type="radio" name="searchCriteria" value="price" class="mr-2">
+                            Price
+                    </label>
+                    <label class="flex items-center mb-5">
+                            <input type="radio" name="searchCriteria" value="spaces" class="mr-2">
+                            Spaces
+                    </label>
+                </div>
+            </form>
+            <div class="bg-gray-800 text-center mt-10 mb-10 ml-5 mr-5 rounded-lg">
+                <p class="m-1 text-bold text-lg"> Sort By </p>
+            </div>
+            <form>
+                <div class="ml-5 mr-32 text-bold text-base">
+                    <label class="flex items-center mb-5 rounded-2xl">
+                            <input type="radio" name="sortBy" value="subject" class="mr-2">
+                            Ascending
+                    </label>
+                    <label class="flex items-center mb-5">
+                            <input type="radio" name="sortBy" value="location" class="mr-2">
+                            Descending
+                    </label>
+                </div>
+            </form>
+            
+        </div>
+        <div class="h-full w-full">
+            <div class="flex flex-row flex-wrap gap-5 justify-center">
+                <div class="bg-neutral-100 w-80 h-80 rounded-lg m-5 shadow-xl">
+                    <p class="text-white text-center text-lg">Maths</p>
+                </div> 
+            </div>
         </div>
     </main>
 </body>
