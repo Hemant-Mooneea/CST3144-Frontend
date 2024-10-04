@@ -53,11 +53,11 @@
                 </div>
                 <div class="ml-5 mr-32 text-bold text-base">
                     <label class="flex items-center mb-5 rounded-2xl">
-                            <input v-model="currentSort" type="radio" name="sortBy" value="subject" class="mr-2">
+                            <input v-model="currentSort" type="radio" name="sortBy" value="ascending" class="mr-2">
                             Ascending
                     </label>
                     <label class="flex items-center mb-5">
-                            <input v-model="currentSort" type="radio" name="sortBy" value="location" class="mr-2">
+                            <input v-model="currentSort" type="radio" name="sortBy" value="descending" class="mr-2">
                             Descending
                     </label>
                 </div>
@@ -95,8 +95,8 @@
                 {
                     lessons: [],
                     server: 'http://localhost:3000',
-                    currentFilter: '',
-                    currentSort: ''
+                    currentFilter: "",
+                    currentSort: "ascending"
                 },
                 methods:
                 {
@@ -141,7 +141,15 @@
                         {
                             this.lessons.sort((a, b) => a.space - b.space);
                         }
+                        if(this.currentSort === 'descending')
+                        {
+                            this.lessons.reverse();
+                        }   
                     },
+                    currentSort()
+                    {
+                        this.lessons.reverse();
+                    }
                 },
                 created()
                 {
