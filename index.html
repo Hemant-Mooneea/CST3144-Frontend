@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@2.7.0/dist/vue.js"></script>
     <link href="styles.css" rel="stylesheet">
-    <title>TuitonLabs</title>
+    <title>TuitionLabs</title>
 </head>
 <body class="bg-gray-200">
     <div id="app">
@@ -30,41 +30,37 @@
                 <div class="bg-gray-800 text-center mt-10 mb-10 ml-5 mr-5 rounded-lg">
                     <p class="m-1 text-bold text-lg"> Filters </p>
                 </div>
-                <form>
-                    <div class="ml-5 mr-32 text-bold text-base">
-                        <label class="flex items-center mb-5 rounded-2xl">
-                                <input type="radio" name="searchCriteria" value="subject" class="mr-2">
-                                Subject
-                        </label>
-                        <label class="flex items-center mb-5">
-                                <input type="radio" name="searchCriteria" value="location" class="mr-2">
-                                Location
-                        </label>
-                        <label class="flex items-center mb-5">
-                                <input type="radio" name="searchCriteria" value="price" class="mr-2">
-                                Price
-                        </label>
-                        <label class="flex items-center mb-5">
-                                <input type="radio" name="searchCriteria" value="spaces" class="mr-2">
-                                Spaces
-                        </label>
-                    </div>
-                </form>
+                <div class="ml-5 mr-32 text-bold text-base">
+                    <label class="flex items-center mb-5 rounded-2xl">
+                            <input v-model="currentFilter" type="radio" name="searchCriteria" value="subject" class="mr-2">
+                            Subject
+                    </label>
+                    <label class="flex items-center mb-5">
+                            <input v-model="currentFilter" type="radio" name="searchCriteria" value="location" class="mr-2">
+                            Location
+                    </label>
+                    <label class="flex items-center mb-5">
+                            <input v-model="currentFilter" type="radio" name="searchCriteria" value="price" class="mr-2">
+                            Price
+                    </label>
+                    <label class="flex items-center mb-5">
+                            <input v-model="currentFilter" type="radio" name="searchCriteria" value="spaces" class="mr-2">
+                            Spaces
+                    </label>
+                </div>
                 <div class="bg-gray-800 text-center mt-10 mb-10 ml-5 mr-5 rounded-lg">
                     <p class="m-1 text-bold text-lg"> Sort By </p>
                 </div>
-                <form>
-                    <div class="ml-5 mr-32 mb-64 text-bold text-base">
-                        <label class="flex items-center mb-5 rounded-2xl">
-                                <input type="radio" name="sortBy" value="subject" class="mr-2">
-                                Ascending
-                        </label>
-                        <label class="flex items-center mb-5">
-                                <input type="radio" name="sortBy" value="location" class="mr-2">
-                                Descending
-                        </label>
-                    </div>
-                </form>
+                <div class="ml-5 mr-32 text-bold text-base">
+                    <label class="flex items-center mb-5 rounded-2xl">
+                            <input v-model="currentSort" type="radio" name="sortBy" value="subject" class="mr-2">
+                            Ascending
+                    </label>
+                    <label class="flex items-center mb-5">
+                            <input v-model="currentSort" type="radio" name="sortBy" value="location" class="mr-2">
+                            Descending
+                    </label>
+                </div>
             </div>
             <div class="h-full w-full">
                 <div class="flex flex-row flex-wrap gap-10 justify-center">
@@ -98,7 +94,9 @@
                 data:
                 {
                     lessons: [],
-                    server: 'http://localhost:3000'
+                    server: 'http://localhost:3000',
+                    currentFilter: '',
+                    currentSort: ''
                 },
                 methods:
                 {
@@ -114,7 +112,7 @@
                             }
                         );
                         this.lessons = await response.json();
-                    }
+                    },
                 }
                 ,
                 computed:
@@ -123,7 +121,27 @@
                 },
                 watch:
                 {
-
+                    currentFilter()
+                    {
+                        if(this.currentFilter === 'subject')
+                        {
+                            // (a, b) => a.topic.localeCompare(b.topic) is the comparison function used to sort the lessons
+                            // a and b are 2 lessons being compared and localeCompare is a string comparison function 
+                            this.lessons.sort((a, b) => a.topic.localeCompare(b.topic));
+                        }
+                        else if(this.currentFilter === 'location')
+                        {
+                            this.lessons.sort((a, b) => a.location.localeCompare(b.location));
+                        }
+                        else if(this.currentFilter === 'price')
+                        {
+                            this.lessons.sort((a, b) => a.price - b.price);
+                        }
+                        else if(this.currentFilter === 'spaces')
+                        {
+                            this.lessons.sort((a, b) => a.space - b.space);
+                        }
+                    },
                 },
                 created()
                 {
