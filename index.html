@@ -16,7 +16,7 @@
                     <p class="font-bold text-white text-2xl">TuitionLabs</p>
                 </div>
                 <div class="flex flex-grow justify-center">
-                    <input class="h-10 m-5 w-1/2 rounded-2xl text-center outline-none" placeholder="Type to search">
+                    <input v-model="searchQuery" class="h-10 m-5 w-1/2 rounded-2xl text-center outline-none" placeholder="Type to search">
                 </div>
                 <div class="flex items-center mr-10">
                     <button class="bg-emerald-400 rounded-lg p-1 pl-5 pr-5 font-bold hover:bg-neutral-100">
@@ -51,7 +51,7 @@
                 <div class="bg-gray-800 text-center mt-10 mb-10 ml-5 mr-5 rounded-lg">
                     <p class="m-1 text-bold text-lg"> Sort By </p>
                 </div>
-                <div class="ml-5 mr-32 text-bold text-base">
+                <div class="ml-5 mr-32 text-bold text-base mb-64">
                     <label class="flex items-center mb-5 rounded-2xl">
                             <input v-model="currentSort" type="radio" name="sortBy" value="ascending" class="mr-2">
                             Ascending
@@ -96,7 +96,8 @@
                     lessons: [],
                     server: 'http://localhost:3000',
                     currentFilter: "",
-                    currentSort: "ascending"
+                    currentSort: "ascending",
+                    searchQuery: ""
                 },
                 methods:
                 {
@@ -113,15 +114,7 @@
                         );
                         this.lessons = await response.json();
                     },
-                }
-                ,
-                computed:
-                {
-
-                },
-                watch:
-                {
-                    currentFilter()
+                    filterLessons()
                     {
                         if(this.currentFilter === 'subject')
                         {
@@ -146,9 +139,45 @@
                             this.lessons.reverse();
                         }   
                     },
+                    async fetchSearchedLessons()
+                    {
+                        let response = await fetch(`${this.server}/search?q=${this.searchQuery}`,
+                            {
+                                method: 'GET',
+                                headers:
+                                {
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        );
+                        if(response.status === 200)
+                        {
+                            this.lessons = await response.json();
+                        }
+                        else
+                        {
+                            this.lessons = [];
+                        }
+                    }
+                }
+                ,
+                computed:
+                {
+
+                },
+                watch:
+                {
+                    currentFilter()
+                    {
+                        this.filterLessons();
+                    },
                     currentSort()
                     {
                         this.lessons.reverse();
+                    },
+                    searchQuery()
+                    {
+                        this.fetchSearchedLessons();
                     }
                 },
                 created()
