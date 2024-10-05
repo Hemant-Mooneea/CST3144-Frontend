@@ -89,14 +89,35 @@
         </div>
         <div v-if="checkout==false">
             <main class="bg-slate-900 h-screen flex items-center justify-center">
-                <div class="bg-white shadow-lg flex inline-flex text-center rounded-sm gap-40">
-                    <div>
-                        <p class="font-bold text-3xl m-10">Order</p>
-                        <p>Mathematics</p>
-                        <button>Back</button>
+                <div class="bg-white shadow-lg flex inline-flex text-center rounded-xl">
+                    <div class="flex flex-col items-center w-2/3">
+                        <div class="flex h-1/4 items-center justify-start w-full gap-1">
+                            <button v-on:click="checkout=true" class="text-3xl mx-4">🡐</button>
+                            <p class="font-extrabold text-3xl my-5">Order Summary</p>
+                        </div>
+                        <div class="my-5 mx-10">
+                            <div class="flex gap-72 my-3 font-bold ">
+                                <p>Items</p>
+                                <p>Price(£)</p>
+                            </div>
+                            <div v-for="lesson in cart">
+                                <div class="flex justify-between text-gray-600">
+                                    <p>{{lesson.topic}}</p>  
+                                    <p class="mr-4">{{lesson.price}}</p>
+                                </div>
+                            </div>
+                            <div class="h-0.5 bg-black my-5"></div>
+                            <div class="flex justify-between my-3 font-bold">
+                                <p>Total</p>
+                                <p class="mr-2">{{total}}</p>
+                            </div>
+                        </div>   
                     </div>
-                    <div>
-                        <p class="font-bold text-2xl m-10">Your Info</p>
+                    <div class="flex flex-col items-center bg-slate-950 rounded-tr-xl rounded-br-xl">
+                        <p class="font-bold text-xl mt-10 text-white">Checkout Info</p>
+                        <input class="text-center rounded-sm my-5 p-1 bg-slate-900" type="text" placeholder="Your Name">
+                        <input class="text-center rounded-sm my-5 p-1 bg-slate-900" type="text" placeholder="Your Phone Number">
+                        <button v-on:click="checkout=true" class="bg-green-400 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-500 my-10 mx-24 w-1/2">Confirm Order</button>
                     </div>
                 </div>
             </main>
@@ -114,6 +135,7 @@
                     currentSort: "ascending",
                     searchQuery: "",
                     cart:[],
+                    total:0,
                     checkout: false
                 },
                 methods:
@@ -121,6 +143,7 @@
                     addItemToCart(lesson)
                     {
                         lesson.space -= 1;
+                        this.total += lesson.price;
                         this.cart.push(lesson);
                     },
                     async fetchLessons()
