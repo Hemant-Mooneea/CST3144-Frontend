@@ -90,7 +90,12 @@
         </div>
         <div v-if="checkout==true">
             <main class="bg-slate-900 h-screen flex items-center justify-center">
-                <div class="bg-white shadow-lg flex inline-flex text-center rounded-xl">
+                <div v-if="showConfirmation==true" class="bg-white rounded-lg inline-flex flex-col items-center justify-center ">
+                    <p class=" text-2xl mx-16 mb-5 mt-16"> Thank you for your order!</p>
+                    <img v-bind:src=`${server}/images/check-mark.png` class="h-20 w-20 my-5">
+                    <button v-on:click="() => {checkout=false; showConfirmation=false }" class="bg-slate-700 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-slate-900 mt-5 mb-16 ">Continue Shopping </button>
+                </div>
+                <div v-if="showConfirmation==false"class="bg-white shadow-lg flex inline-flex text-center rounded-xl">
                     <div class="flex flex-col items-center w-2/3">
                         <div class="flex h-1/4 items-center justify-start w-full gap-1 max-h-80">
                             <button v-on:click="checkout=false" class="text-3xl mx-4">🡐</button>
@@ -156,12 +161,14 @@
                     username: "",
                     phone: "",
                     isUsernameValid: true,
-                    isPhoneValid: true
+                    isPhoneValid: true,
+                    showConfirmation: false
                 },
                 methods:
                 {   
                     handleCheckout()
                     {
+                        this.showConfirmation = true;
                         for(let lesson of this.cart)
                         {
                             this.order.push({
