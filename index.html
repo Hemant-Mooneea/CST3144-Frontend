@@ -168,7 +168,8 @@
                                 topic: lesson._id,
                                 qty: lesson.qty
                             });
-                            this.updateLessonSpace(lesson);
+                            let newLesson = this.lessons.find((item) => item.topic === lesson.topic);
+                            this.updateLesson(newLesson);
                         }
 
                         this.order = 
@@ -184,16 +185,20 @@
                         this.order = [];
                         this.total = 0;
                     },
-                    updateLessonSpace(lesson)
+                    updateLesson(lesson)
                     {
-                        fetch(`${this.server}/lessons/${lesson._id}`,
+    
+                        let lessonID = lesson._id;
+                        //delete id since it's immutable
+                        delete lesson._id;
+                        fetch(`${this.server}/lessons/${lessonID}`,
                             {
                                 method: 'PUT',
                                 headers:
                                 {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify({space:lesson.space - lesson.qty + 1})
+                                body: JSON.stringify({lesson})
                             }
                         );
                     },
