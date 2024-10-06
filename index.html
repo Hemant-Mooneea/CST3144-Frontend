@@ -77,7 +77,7 @@
                                     </div>
                                 </div>
                                 
-                                <button v-on:click="addItemToCart(lesson)" class="p-3 bg-emerald-300 rounded-full text-2xl font-bold h-10 w-10 flex items-center justify-center mr-5 hover:bg-emerald-400 disabled:bg-gray-500" :disabled="lesson.space <= 0">
+                                <button v-on:click="addToCart(lesson)" class="p-3 bg-emerald-300 rounded-full text-2xl font-bold h-10 w-10 flex items-center justify-center mr-5 hover:bg-emerald-400 disabled:bg-gray-500" :disabled="lesson.space <= 0">
                                         <p class="relative bottom-0.5">+</p>
                                 </button>
                 
@@ -91,19 +91,24 @@
             <main class="bg-slate-900 h-screen flex items-center justify-center">
                 <div class="bg-white shadow-lg flex inline-flex text-center rounded-xl">
                     <div class="flex flex-col items-center w-2/3">
-                        <div class="flex h-1/4 items-center justify-start w-full gap-1">
+                        <div class="flex h-1/4 items-center justify-start w-full gap-1 max-h-80">
                             <button v-on:click="checkout=true" class="text-3xl mx-4">🡐</button>
                             <p class="font-extrabold text-3xl my-5">Order Summary</p>
                         </div>
-                        <div class="my-5 mx-10">
-                            <div class="flex gap-72 my-3 font-bold ">
+                        <div class="my-5 mx-10 max-h-96 min-h-96 overflow-y-auto">
+                            <div class="flex gap-40 my-3 font-bold ">
                                 <p>Items</p>
+                                <p>Qty</p>
                                 <p>Price(£)</p>
                             </div>
-                            <div v-for="lesson in cart">
-                                <div class="flex justify-between text-gray-600">
-                                    <p>{{lesson.topic}}</p>  
-                                    <p class="mr-4">{{lesson.price}}</p>
+                            <div v-for="(lesson,index) in cart" class="overflow-y-auto">
+                                <div class="flex text-gray-600 my-2">
+                                    <button v-on:click="removeFromCart(index,lesson)" class="text-white bg-slate-700 hover:bg-slate-900 rounded-full px-2 text-bold mr-1 ">-</button>
+                                    <div class="flex justify-between w-full">
+                                        <p class="w-36 text-left">{{lesson.topic}}</p>  
+                                        <p class="mr-8">{{lesson.qty}}</p>
+                                        <p class="mr-4 w-36 text-right">{{lesson.price}}</p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="h-0.5 bg-black my-5"></div>
@@ -114,10 +119,10 @@
                         </div>   
                     </div>
                     <div class="flex flex-col items-center bg-slate-950 rounded-tr-xl rounded-br-xl">
-                        <p class="font-bold text-xl mt-10 text-white">Checkout Info</p>
-                        <input class="text-center rounded-sm my-5 p-1 bg-slate-900" type="text" placeholder="Your Name">
-                        <input class="text-center rounded-sm my-5 p-1 bg-slate-900" type="text" placeholder="Your Phone Number">
-                        <button v-on:click="checkout=true" class="bg-green-400 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-500 my-10 mx-24 w-1/2">Confirm Order</button>
+                        <p class="font-bold text-xl mt-10 mb-5 text-white">Checkout Info</p>
+                        <input class="text-white text-center rounded-lg my-5 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Name">
+                        <input class="text-white text-center rounded-lg my-5 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Phone Number">
+                        <button v-on:click="checkout=true" class="bg-green-500 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-600 my-5 mx-24 w-1/2">Confirm Order</button>
                     </div>
                 </div>
             </main>
@@ -139,12 +144,35 @@
                     checkout: false
                 },
                 methods:
-                {
-                    addItemToCart(lesson)
+                {   
+                    removeFromCart(index,lesson)
+                    {
+                        if(lesson.qty > 1)
+                        {
+                            lesson.qty -= 1;
+                        }
+                        else
+                        {
+                            this.cart.splice(index,1);
+                        }
+                        this.total -= lesson.price;
+                        this.lessons.find((item) => item.topic === lesson.topic).space += 1;
+                    },
+                    addToCart(lesson)
                     {
                         lesson.space -= 1;
                         this.total += lesson.price;
-                        this.cart.push(lesson);
+                        let currentItem = this.cart.find((item) => item.topic === lesson.topic);
+                        if(currentItem)
+                        {
+                            currentItem.qty +=1;   
+                        }
+                        else
+                        {
+                            this.cart.push({
+                                ...lesson,
+                                qty:1});
+                        }
                     },
                     async fetchLessons()
                     {
