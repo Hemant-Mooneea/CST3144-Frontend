@@ -54,11 +54,11 @@
                     </div>
                     <div class="ml-5 mr-32 text-bold text-base mb-64">
                         <label class="flex items-center mb-5 rounded-2xl">
-                                <input v-model="currentSort" type="radio" name="sortBy" value="ascending" class="mr-2">
+                                <input v-model="currentSort" type="radio" name="sortBy" value="ascending" class="mr-2" :disabled="currentFilter==''">
                                 Ascending
                         </label>
                         <label class="flex items-center mb-5">
-                                <input v-model="currentSort" type="radio" name="sortBy" value="descending" class="mr-2">
+                                <input v-model="currentSort" type="radio" name="sortBy" value="descending" class="mr-2":disabled="currentFilter==''">
                                 Descending
                         </label>
                     </div>
