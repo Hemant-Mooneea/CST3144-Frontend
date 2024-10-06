@@ -168,7 +168,9 @@
                                 topic: lesson._id,
                                 qty: lesson.qty
                             });
+                            this.updateLessonSpace(lesson);
                         }
+
                         this.order = 
                         {
                             username: this.username,
@@ -176,18 +178,37 @@
                             lessons: this.order
                         };
                         
+                        this.sendOrder()
+
+                        this.cart = [];
+                        this.order = [];
+                        this.total = 0;
+                    },
+                    updateLessonSpace(lesson)
+                    {
+                        fetch(`${this.server}/lessons/${lesson._id}`,
+                            {
+                                method: 'PUT',
+                                headers:
+                                {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({space:lesson.space - lesson.qty + 1})
+                            }
+                        );
+                    },
+                    sendOrder()
+                    {
                         fetch(`${this.server}/order`,
                             {
                                 method: 'POST',
                                 headers:
                                 {
                                     'Content-Type': 'application/json'
-                                },  
+                                },
                                 body: JSON.stringify(this.order)
                             }
                         );
-                        this.cart = [];
-                        this.order = [];
                     },
                     validateUsername()
                     {
