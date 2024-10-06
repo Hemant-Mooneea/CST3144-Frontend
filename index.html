@@ -120,8 +120,14 @@
                     </div>
                     <div class="flex flex-col items-center bg-slate-950 rounded-tr-xl rounded-br-xl">
                         <p class="font-bold text-xl mt-10 mb-5 text-white">Checkout Info</p>
-                        <input class="text-white text-center rounded-lg my-5 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Name">
-                        <input class="text-white text-center rounded-lg my-5 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Phone Number">
+                        <input v-model="username" v-bind:class="{'border-rose-500':!isUsernameValid}" class="border-2 border-slate-900 text-white text-center rounded-lg my-3 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Name">
+                        <div class="h-5">
+                            <p v-show="!isUsernameValid" class="text-red-400 text-sm">Invalid Name</p>
+                        </div>
+                        <input v-model="phone"  v-bind:class="{'border-rose-500':!isPhoneValid}" class="border-2 border-slate-900 text-white text-center rounded-lg my-3 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Phone Number">
+                        <div class="h-5">
+                            <p v-show="!isPhoneValid" class="text-red-400 text-sm">Invalid Phone number</p>
+                        </div>
                         <button v-on:click="checkout=true" class="bg-green-500 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-600 my-5 mx-24 w-1/2">Confirm Order</button>
                     </div>
                 </div>
@@ -129,6 +135,9 @@
         </div>
     </div>
     <script>
+        /*
+            >>>>> FIX ISSUE WHERE SEARCHING ADDS AN EXTRA AMOUNT OF SEAT TO EVERY LESSON(i.e I CAN ORDER 10 WHEN ONLY 5 ARE AVAILABLE) <<<<<
+        */
         let webstore = new Vue(
             {
                 el:'#webstore',
@@ -141,10 +150,44 @@
                     searchQuery: "",
                     cart:[],
                     total:0,
-                    checkout: false
+                    checkout: false,
+                    username: "",
+                    phone: "",
+                    isUsernameValid: true,
+                    isPhoneValid: true
                 },
                 methods:
                 {   
+                    validateUsername()
+                    {
+                        usernameRegex = /^[a-zA-Z\s]+$/
+                        if (this.username.match(usernameRegex))
+                        {
+                            this.isUsernameValid = true;
+                        }
+                        else
+                        {
+                            this.isUsernameValid = false;
+                        }
+;  
+                    },
+                    validatePhone()
+                    {   
+
+                        if ( this.phone.length !== 0 && !this.phone[this.phone.length - 1].match(/[\d]/)) 
+                        {
+                            this.phone = this.phone.slice(0, -1);
+                        }
+
+                        if (this.phone.length >= 7)
+                        {
+                            this.isPhoneValid = true;
+                        }
+                        else
+                        {
+                            this.isPhoneValid = false;
+                        }
+                    },
                     removeFromCart(index,lesson)
                     {
                         if(lesson.qty > 1)
@@ -251,7 +294,16 @@
                     searchQuery()
                     {
                         this.fetchSearchedLessons();
+                    },
+                    username()
+                    {
+                        this.validateUsername();
+                    },
+                    phone()
+                    {
+                        this.validatePhone();
                     }
+                    
                 },
                 created()
                 {
