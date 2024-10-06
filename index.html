@@ -128,7 +128,7 @@
                         <div class="h-5">
                             <p v-show="!isPhoneValid" class="text-red-400 text-sm">Invalid Phone number</p>
                         </div>
-                        <button v-on:click="checkout=true" class="bg-green-500 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-600 my-5 mx-24 w-1/2">Confirm Order</button>
+                        <button v-on:click="checkout=true" class="bg-green-500 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-600 my-5 mx-24 w-1/2 disabled:bg-red-500" :disabled="!canCheckout">Confirm Order</button>
                     </div>
                 </div>
             </main>
@@ -279,7 +279,10 @@
                 ,
                 computed:
                 {
-
+                    canCheckout()
+                    {
+                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid && this.username.length > 0 && this.phone.length > 0;
+                    }
                 },
                 watch:
                 {
