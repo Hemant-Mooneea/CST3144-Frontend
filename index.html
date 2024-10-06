@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@2.7.0/dist/vue.js"></script>
+    <link rel="icon" type="image/x-icon" href="http://localhost:3000/images/favicon.ico">
     <link href="styles.css" rel="stylesheet">
     <title>TuitionLabs</title>
 </head>
@@ -169,7 +170,7 @@
                         {
                             this.isUsernameValid = false;
                         }
-;  
+  
                     },
                     validatePhone()
                     {   
@@ -297,10 +298,6 @@
                     searchQuery()
                     {
                         this.fetchSearchedLessons();
-                    },
-                    username()
-                    {
-                        this.validateUsername();
                     },
                     phone()
                     {
