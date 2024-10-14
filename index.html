@@ -137,6 +137,14 @@
                         <div class="h-5">
                             <p v-show="!isPhoneValid && isPhoneEmpty" class="text-red-400 text-sm">Invalid Phone number</p>
                         </div>
+                        <input v-model="user.email"  v-bind:class="{'border-rose-500':!isEmailValid && isEmailEmpty}" class="border-2 border-slate-900 text-white text-center rounded-lg my-3 p-1 bg-slate-900 outline-none" type="email" placeholder="Your Email">
+                        <div class="h-5">
+                            <p v-show="!isEmailValid && isEmailEmpty" class="text-red-400 text-sm">Invalid Email</p>
+                        </div>
+                        <input v-model="user.billingAddress"  v-bind:class="{'border-rose-500':!isBillingAddressValid && isBillingAddressEmpty}" class="border-2 border-slate-900 text-white text-center rounded-lg my-3 p-1 bg-slate-900 outline-none" type="email" placeholder="Your Billing Address">
+                        <div class="h-5">
+                            <p v-show="!isBillingAddressValid && isBillingAddressEmpty" class="text-red-400 text-sm">Invalid Billing Address</p>
+                        </div>
                         <button v-on:click="handleCheckout()" class="bg-green-500 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-600 my-5 mx-24 w-1/2 disabled:bg-red-500" :disabled="!canCheckout">Confirm Order</button>
                     </div>
                 </div>
@@ -161,7 +169,9 @@
                     user:
                     {
                         username: "",
-                        phone: ""
+                        phone: "",
+                        email: "",
+                        billingAddress: "",
                     },
                     showConfirmation: false
                 },
@@ -324,18 +334,35 @@
                         return usernameRegex.test(this.user.username) && this.user.username.length > 0 ;
                         
                     },
+                    isUsernameEmpty()
+                    {
+                        return this.user.username;
+                    },
                     isPhoneValid()
                     {
                         const phoneRegex = /^[0-9]+$/;
                         return phoneRegex.test(this.user.phone) && this.user.phone.length > 0;
                     },
-                    isUsernameEmpty()
-                    {
-                        return this.user.username;
-                    },
                     isPhoneEmpty()
                     {
                         return this.user.phone.length;
+                    },
+                    isEmailValid()
+                    {
+                        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                        return emailRegex.test(this.user.email) && this.user.email.length > 0;
+                    },
+                    isEmailEmpty()
+                    {
+                        return this.user.email.length;
+                    },
+                    isBillingAddressValid()
+                    {
+                        return this.user.billingAddress.length > 0;
+                    },
+                    isBillingAddressEmpty()
+                    {
+                        return this.user.billingAddress;
                     }
                 },
                 watch:
