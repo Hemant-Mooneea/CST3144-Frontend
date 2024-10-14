@@ -102,7 +102,7 @@
                     <div class="flex flex-col items-center w-2/3">
                         <div class="flex h-1/4 items-center justify-start w-full gap-1 max-h-80">
                             <button v-on:click="checkout=false" class="text-3xl mx-4">🡐</button>
-                            <p class="font-extrabold text-3xl my-5">Order Summary</p>
+                            <p class="font-extrabold text-3xl my-5">Your Order</p>
                         </div>
                         <div class="my-5 mx-10 max-h-96 min-h-96 overflow-y-auto">
                             <div class="flex gap-40 my-3 font-bold ">
@@ -129,13 +129,13 @@
                     </div>
                     <div class="flex flex-col items-center bg-slate-950 rounded-tr-xl rounded-br-xl">
                         <p class="font-bold text-xl mt-10 mb-5 text-white">Checkout Info</p>
-                        <input v-model="username" v-bind:class="{'border-rose-500':!isUsernameValid}" class="border-2 border-slate-900 text-white text-center rounded-lg my-3 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Name">
+                        <input v-model="user.username" v-bind:class="{'border-rose-500':!isUsernameValid && isUsernameEmpty}" class="border-2 border-slate-900 text-white text-center rounded-lg my-3 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Name">
                         <div class="h-5">
-                            <p v-show="!isUsernameValid" class="text-red-400 text-sm">Invalid Name</p>
+                            <p v-show="!isUsernameValid && isUsernameEmpty" class="text-red-400 text-sm">Invalid Name</p>
                         </div>
-                        <input v-model="phone"  v-bind:class="{'border-rose-500':!isPhoneValid}" class="border-2 border-slate-900 text-white text-center rounded-lg my-3 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Phone Number">
+                        <input v-model="user.phone"  v-bind:class="{'border-rose-500':!isPhoneValid && isPhoneEmpty}" class="border-2 border-slate-900 text-white text-center rounded-lg my-3 p-1 bg-slate-900 outline-none" type="text" placeholder="Your Phone Number">
                         <div class="h-5">
-                            <p v-show="!isPhoneValid" class="text-red-400 text-sm">Invalid Phone number</p>
+                            <p v-show="!isPhoneValid && isPhoneEmpty" class="text-red-400 text-sm">Invalid Phone number</p>
                         </div>
                         <button v-on:click="handleCheckout()" class="bg-green-500 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-600 my-5 mx-24 w-1/2 disabled:bg-red-500" :disabled="!canCheckout">Confirm Order</button>
                     </div>
@@ -144,27 +144,25 @@
         </div>
     </div>
     <script>
-        /*
-            >>>>> FIX ISSUE WHERE SEARCHING ADDS AN EXTRA AMOUNT OF SEAT TO EVERY LESSON(i.e I CAN ORDER 10 WHEN ONLY 5 ARE AVAILABLE) <<<<<
-        */
         let webstore = new Vue(
             {
                 el:'#webstore',
                 data:
                 {
                     lessons: [],
+                    cart:[],
+                    order:[],
                     server: 'http://localhost:3000',
                     currentFilter: "",
                     currentSort: "ascending",
                     searchQuery: "",
-                    cart:[],
-                    order:[],
                     total:0,
                     checkout: false,
-                    username: "",
-                    phone: "",
-                    isUsernameValid: true,
-                    isPhoneValid: true,
+                    user:
+                    {
+                        username: "",
+                        phone: ""
+                    },
                     showConfirmation: false
                 },
                 methods:
@@ -184,8 +182,8 @@
 
                         this.order = 
                         {
-                            username: this.username,
-                            phone: this.phone,
+                            username: this.user.username,
+                            phone: this.user.phone,
                             lessons: this.order
                         };
                         
@@ -224,36 +222,6 @@
                                 body: JSON.stringify(this.order)
                             }
                         );
-                    },
-                    validateUsername()
-                    {
-                        usernameRegex = /^[a-zA-Z\s]+$/
-                        if (this.username.match(usernameRegex))
-                        {
-                            this.isUsernameValid = true;
-                        }
-                        else
-                        {
-                            this.isUsernameValid = false;
-                        }
-  
-                    },
-                    validatePhone()
-                    {   
-
-                        if ( this.phone.length !== 0 && !this.phone[this.phone.length - 1].match(/[\d]/)) 
-                        {
-                            this.phone = this.phone.slice(0, -1);
-                        }
-
-                        if (this.phone.length >= 7)
-                        {
-                            this.isPhoneValid = true;
-                        }
-                        else
-                        {
-                            this.isPhoneValid = false;
-                        }
                     },
                     removeFromCart(index,lesson)
                     {
@@ -348,7 +316,26 @@
                 {
                     canCheckout()
                     {
-                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid && this.username.length > 0 && this.phone.length > 0;
+                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid;
+                    },
+                    isUsernameValid()
+                    {
+                        const usernameRegex = /^[a-zA-Z\s]+$/;
+                        return usernameRegex.test(this.user.username) && this.user.username.length > 0 ;
+                        
+                    },
+                    isPhoneValid()
+                    {
+                        const phoneRegex = /^[0-9]+$/;
+                        return phoneRegex.test(this.user.phone) && this.user.phone.length > 0;
+                    },
+                    isUsernameEmpty()
+                    {
+                        return this.user.username;
+                    },
+                    isPhoneEmpty()
+                    {
+                        return this.user.phone.length;
                     }
                 },
                 watch:
@@ -365,15 +352,6 @@
                     {
                         this.fetchSearchedLessons();
                     },
-                    username()
-                    {
-                        this.validateUsername();
-                    },
-                    phone()
-                    {
-                        this.validatePhone();
-                    }
-                    
                 },
                 created()
                 {
