@@ -93,12 +93,32 @@
         </div>
         <div v-if="checkout==true">
             <main class="bg-slate-900 h-screen flex items-center justify-center">
-                <div v-if="showConfirmation==true" class="bg-white rounded-lg inline-flex flex-col items-center justify-center ">
+                <div v-if="checkoutStage == 2" class="bg-white rounded-lg inline-flex flex-col items-center justify-center ">
                     <p class=" text-2xl mx-16 mb-5 mt-16"> Thank you for your order!</p>
                     <img v-bind:src=`${server}/images/check-mark.png` class="h-20 w-20 my-5">
-                    <button v-on:click="() => {checkout=false; showConfirmation=false }" class="bg-slate-700 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-slate-900 mt-5 mb-16 ">Continue Shopping </button>
+                    <button v-on:click="() => {checkout = false; checkoutStage = 0}" class="bg-slate-700 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-slate-900 mt-5 mb-16 ">Continue Shopping </button>
                 </div>
-                <div v-if="showConfirmation==false"class="bg-white shadow-lg flex inline-flex text-center rounded-xl">
+                <div v-if="checkoutStage == 1" class="bg-white rounded-lg inline-flex flex-col items-center justify-center ">
+                    <p class=" text-2xl mt-8 font-bold"> Your Order Summary </p>
+                    <div class="h-0.5 w-full bg-black my-8"></div>
+                    <div class="w-full mx-10 max-h-80 overflow-y-auto">
+                        <div v-for="order in cart">
+                            <div class="mx-3">
+                                <p>Lesson ID: {{order._id}}</p>   
+                                <p>Lesson Location: {{order.location}}</p>
+                                <p>Lesson Topic: {{order.topic}}</p>
+                                <p>Lesson Price: {{order.price}}</p>
+                                <p>Quantity Ordered: {{order.qty}}</p>      
+                            </div> 
+                            <div class="h-0.5 w-full bg-black my-5"></div>
+                        </div>
+                    </div>
+                    <div class="flex gap-20 mb-5 w-full justify-center text-center">
+                        <button v-on:click="checkoutStage--" class="text-sm bg-slate-700 text-white rounded-sm py-1 font-bold hover:bg-slate-900 my-5 w-1/4">Return</button>
+                        <button v-on:click="handleCheckout()" class="text-sm bg-green-400 text-white rounded-sm py-1 font-bold hover:bg-emerald-600 my-5 w-1/4">Confirm</button>
+                    </div>
+                </div>
+                <div v-if="checkoutStage == 0" class="bg-white shadow-lg flex inline-flex text-center rounded-xl">
                     <div class="flex flex-col items-center w-2/3">
                         <div class="flex h-1/4 items-center justify-start w-full gap-1 max-h-80">
                             <button v-on:click="checkout=false" class="text-3xl mx-4">🡐</button>
@@ -145,7 +165,7 @@
                         <div class="h-5">
                             <p v-show="!isBillingAddressValid && isBillingAddressEmpty" class="text-red-400 text-sm">Invalid Billing Address</p>
                         </div>
-                        <button v-on:click="handleCheckout()" class="bg-green-500 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-600 my-5 mx-24 w-1/2 disabled:bg-red-500" :disabled="!canCheckout">Confirm Order</button>
+                        <button v-on:click="checkoutStage++" class="bg-green-500 text-white rounded-lg pl-4 pr-4 p-1 font-bold hover:bg-green-600 my-5 mx-24 w-1/2 disabled:bg-red-500" :disabled="!canCheckout">Confirm Order</button>
                     </div>
                 </div>
             </main>
@@ -173,13 +193,13 @@
                         email: "",
                         billingAddress: "",
                     },
-                    showConfirmation: false
+                    checkoutStage: 0
                 },
                 methods:
                 {   
                     handleCheckout()
                     {
-                        this.showConfirmation = true;
+                        this.checkoutStage++ ;
                         for(let lesson of this.cart)
                         {
                             this.order.push({
@@ -328,7 +348,7 @@
                 {
                     canCheckout()
                     {
-                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid && this.isEmailValid && this.isBillingAddressValid;
+                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid;
                     },
                     isUsernameValid()
                     {
