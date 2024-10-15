@@ -194,7 +194,9 @@
                         {
                             username: this.user.username,
                             phone: this.user.phone,
-                            lessons: this.order
+                            email: this.user.email,
+                            billingAddress: this.user.billingAddress,
+                            lessons: this.order,
                         };
                         
                         this.sendOrder()
@@ -326,7 +328,7 @@
                 {
                     canCheckout()
                     {
-                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid;
+                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid && this.isEmailValid && this.isBillingAddressValid;
                     },
                     isUsernameValid()
                     {
