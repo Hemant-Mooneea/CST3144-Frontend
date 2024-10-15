@@ -124,19 +124,21 @@
                             <button v-on:click="checkout=false" class="text-3xl mx-4">🡐</button>
                             <p class="font-extrabold text-3xl my-5">Your Order</p>
                         </div>
-                        <div class="my-5 mx-10 max-h-96 min-h-96 overflow-y-auto">
+                        <div class="my-5 mx-10">
                             <div class="flex gap-40 my-3 font-bold ">
                                 <p>Items</p>
                                 <p>Qty</p>
                                 <p>Price(£)</p>
                             </div>
-                            <div v-for="(lesson,index) in cart" class="overflow-y-auto">
-                                <div class="flex text-gray-600 my-2">
-                                    <button v-on:click="removeFromCart(index,lesson)" class="text-white bg-slate-700 hover:bg-slate-900 rounded-full px-2 text-bold mr-1 ">-</button>
-                                    <div class="flex justify-between w-full">
-                                        <p class="w-36 text-left">{{lesson.topic}}</p>  
-                                        <p class="mr-8">{{lesson.qty}}</p>
-                                        <p class="mr-4 w-36 text-right">{{lesson.price}}</p>
+                            <div class="w-full max-h-80 overflow-y-auto">
+                                <div v-for="(lesson,index) in cart">
+                                    <div class="flex text-gray-600 my-2">
+                                        <button v-on:click="removeFromCart(index,lesson)" class="text-white bg-slate-700 hover:bg-slate-900 rounded-full px-2 text-bold mr-1 ">-</button>
+                                        <div class="flex justify-between w-full">
+                                            <p class="w-36 text-left">{{lesson.topic}}</p>  
+                                            <p class="mr-8">{{lesson.qty}}</p>
+                                            <p class="mr-4 w-36 text-right">{{lesson.price}}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
