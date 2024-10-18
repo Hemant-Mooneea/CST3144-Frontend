@@ -18,7 +18,7 @@
                         <p class="font-bold text-white text-2xl">TuitionLabs</p>
                     </div>
                     <div class="flex flex-grow justify-center">
-                        <input v-model="searchQuery" class="h-10 m-5 w-1/2 rounded-2xl text-center outline-none" placeholder="Type to search">
+                        <input v-model="searchQuery" v-on:input="fetchSearchedLessons()" class="h-10 m-5 w-1/2 rounded-2xl text-center outline-none" placeholder="Type to search">
                     </div>
                     <div class="flex items-center mr-10">
                         <button v-on:click="checkout=true" class="bg-emerald-400 rounded-lg p-1 pl-5 pr-5 font-bold hover:bg-neutral-100 disabled:bg-red-500" :disabled="cart.length == 0">
@@ -389,13 +389,7 @@
                         return this.user.billingAddress;
                     }
                 },
-                watch:
-                {
-                    searchQuery()
-                    {
-                        this.fetchSearchedLessons();
-                    },
-                },
+
                 created()
                 {
                     this.fetchLessons();
