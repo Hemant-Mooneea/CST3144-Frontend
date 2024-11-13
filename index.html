@@ -79,7 +79,7 @@
                                 </div>
                                 
                                 <button v-on:click="addToCart(lesson)" class="p-3 bg-emerald-300 rounded-full text-2xl font-bold h-10 w-10 flex items-center justify-center mr-5 hover:bg-emerald-400 disabled:bg-gray-500" :disabled="lesson.space <= 0">
-                                        <p class="relative bottom-0.5">+</p>
+                                    <p class="relative bottom-0.5">+</p>
                                 </button>
                 
                             </div> 
@@ -199,19 +199,22 @@
                 },
                 methods:
                 {   
+                    // function which handles the checkout process
                     handleCheckout()
                     {
+                        // checkoutStage represents the different stages of the checkout process
                         this.checkoutStage++ ;
+                        // adding each lesson in the cart to the order array
                         for(let lesson of this.cart)
                         {
                             this.order.push({
                                 topic: lesson._id,
                                 qty: lesson.qty
                             });
-                            let newLesson = this.lessons.find((item) => item.topic === lesson.topic);
-                            this.updateLesson(newLesson);
+                            // update any changes made to the lesson in MongoDB
+                            this.updateLesson(lesson);
                         }
-
+                        // creating the order object with the user's details and the lessons ordered
                         this.order = 
                         {
                             username: this.user.username,
@@ -221,18 +224,24 @@
                             lessons: this.order,
                         };
                         
+                        // send the order to the backend
                         this.sendOrder()
 
+                        // clear the cart and order arrays
                         this.cart = [];
                         this.order = [];
                         this.total = 0;
                     },
+                    // function to update any lesson attribute in MongoDB
                     updateLesson(lesson)
                     {
-    
+                        // get the lesson ID
                         let lessonID = lesson._id;
                         //delete id since it's immutable
                         delete lesson._id;
+                        //delete qty since it's not stored in MongoDB
+                        delete lesson.qty;
+                        // send the updated lesson to the backend using a PUT request
                         fetch(`${this.server}/lessons/${lessonID}`,
                             {
                                 method: 'PUT',
@@ -244,6 +253,7 @@
                             }
                         );
                     },
+                    // function to send the order to the backend
                     sendOrder()
                     {
                         fetch(`${this.server}/order`,
@@ -257,35 +267,51 @@
                             }
                         );
                     },
+                    /*
+                        function to remove a lesson from the cart
+                        @param index: the index of the lesson in the cart
+                        @param lesson: the lesson to be removed
+                    */
                     removeFromCart(index,lesson)
-                    {
+                    {   
                         if(lesson.qty > 1)
                         {
                             lesson.qty -= 1;
                         }
                         else
-                        {
+                        {   
+                            // remove the lesson from the cart by splicing it out at the index
                             this.cart.splice(index,1);
                         }
                         this.total -= lesson.price;
+                        // update the space of the lesson in the lessons array
                         this.lessons.find((item) => item.topic === lesson.topic).space += 1;
                     },
+                    /* 
+                        function to add a lesson to the cart
+                        @param lesson: the lesson to be added to the cart
+                    */
                     addToCart(lesson)
                     {
                         lesson.space -= 1;
                         this.total += lesson.price;
+                        // check if the lesson is already in the cart
                         let currentItem = this.cart.find((item) => item.topic === lesson.topic);
+                        // if the lesson is in the cart, increment the quantity and decrement the space
                         if(currentItem)
                         {
-                            currentItem.qty +=1;   
+                            currentItem.qty += 1;   
+                            currentItem.space -= 1;
                         }
+                        // if the lesson is not in the cart, add it to the cart
                         else
-                        {
+                        {   //...lesson is used to copy the lesson object
                             this.cart.push({
                                 ...lesson,
                                 qty:1});
                         }
                     },
+                    // function to fetch all lessons from the backend
                     async fetchLessons()
                     {
                         let response = await fetch(`${this.server}/lessons`,
@@ -299,6 +325,7 @@
                         );
                         this.lessons = await response.json();
                     },
+                    // function to filter the lessons based on the current filter
                     filterLessons()
                     {
                         if(this.currentFilter === 'subject')
@@ -313,17 +340,21 @@
                         }
                         else if(this.currentFilter === 'price')
                         {
+                            // (a, b) => a.price - b.price is the comparison function used to sort the lessons
+                            // a and b are 2 lessons being compared and price - price is a numerical comparison function
                             this.lessons.sort((a, b) => a.price - b.price);
                         }
                         else if(this.currentFilter === 'spaces')
                         {
                             this.lessons.sort((a, b) => a.space - b.space);
                         }
+                        // if the current sort is descending, reverse the lessons array
                         if(this.currentSort === 'descending')
                         {
                             this.lessons.reverse();
                         }   
                     },
+                    // function to fetch lessons based on the search query
                     async fetchSearchedLessons()
                     {
                         let response = await fetch(`${this.server}/search?q=${this.searchQuery}`,
@@ -335,10 +366,12 @@
                                 }
                             }
                         );
+                        // if the response is successful, update the lessons array
                         if(response.status === 200)
                         {
                             this.lessons = await response.json();
                         }
+                        // if response is not successful, set the lessons array to an empty array displaying nothing
                         else
                         {
                             this.lessons = [];
@@ -347,49 +380,57 @@
                 }
                 ,
                 computed:
-                {
+                {   // function to check if the user can checkout based on cart length and user details 
                     canCheckout()
                     {
-                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid;
+                        return this.cart.length > 0 && this.isUsernameValid && this.isPhoneValid && this.isEmailValid && this.isBillingAddressValid;
                     },
+                    // function to check if the username is valid using a regex
                     isUsernameValid()
                     {
                         const usernameRegex = /^[a-zA-Z\s]+$/;
                         return usernameRegex.test(this.user.username) && this.user.username.length > 0 ;
                         
                     },
+                    // function to check if the username is empty
                     isUsernameEmpty()
                     {
                         return this.user.username;
                     },
+                    // function to check if the phone number is valid using a regex
                     isPhoneValid()
                     {
                         const phoneRegex = /^[0-9]+$/;
                         return phoneRegex.test(this.user.phone) && this.user.phone.length > 0;
                     },
+                    // function to check if the phone number is empty
                     isPhoneEmpty()
                     {
                         return this.user.phone.length;
                     },
+                    // function to check if the email is valid using a regex
                     isEmailValid()
                     {
                         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
                         return emailRegex.test(this.user.email) && this.user.email.length > 0;
                     },
+                    // function to check if the email is empty
                     isEmailEmpty()
                     {
                         return this.user.email.length;
                     },
+                    // function to check if the billing address is valid
                     isBillingAddressValid()
                     {
                         return this.user.billingAddress.length > 0;
                     },
+                    // function to check if the billing address is empty
                     isBillingAddressEmpty()
                     {
                         return this.user.billingAddress;
                     }
                 },
-
+                // function to fetch lessons when the page is created
                 created()
                 {
                     this.fetchLessons();
